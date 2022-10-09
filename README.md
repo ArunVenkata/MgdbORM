@@ -3,6 +3,8 @@
 ## What is this ?
 This is some python code to help keep your mongo collections and databases organised.
 
+Any Contributions are welcome!
+
 ## Usage
 
 ```python
