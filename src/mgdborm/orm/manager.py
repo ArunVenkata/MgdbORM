@@ -59,9 +59,18 @@ class MgdbManager:
     def __checks(self):
         """Class level error checks"""
         if self.__collection_class is None:
-            raise ValueError(
-                "Collection class has not been registered. Call register_collection_class first!"
+            if self.__settings.get("strictmode")==True:
+                raise ValueError(
+                    "Collection class has not been registered. Call register_collection_class first!"
+                )
+            warnings.simplefilter("always", SyntaxWarning)
+            warnings.warn(
+                f"Collection class is missing, Please use collection class. Refer to https://github.com/ArunVenkata/MgdbORM/blob/master/README.md",
+                category=SyntaxWarning,
+                stacklevel=2
             )
+            warnings.simplefilter("default", SyntaxWarning)
+        
         if self.__default_db_name is None:
             raise ValueError("Default Database name has not been specified")
 
@@ -74,14 +83,6 @@ class MgdbManager:
 
         self.__checks()
 
-        if not isinstance(collection_name, self.__collection_class):
-            warnings.simplefilter("always", SyntaxWarning)
-            warnings.warn(
-                f"Invalid Type for collection_name. Must be of type <class '{self.__collection_class.__name__}'",
-                category=SyntaxWarning,
-                stacklevel=2
-            )
-            warnings.simplefilter("default", SyntaxWarning)
         
         if isinstance(collection_name, self.__collection_class):
             collection_name = collection_name.value
@@ -100,8 +101,6 @@ class MandateMgdbManager:
                 "MgdbManager instance Missing!\nAssign mgdb_manager_instance to be an instance of MgdbManager!"
             )
         self.mgdb_manager: MgdbManager = kwargs.get("mgdb_manager_instance")
-
-
 
 
 __all__ = ("MgdbClass", "MgdbManager", "MandateMgdbManager")
