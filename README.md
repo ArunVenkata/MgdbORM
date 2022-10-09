@@ -24,7 +24,7 @@ class AuthDbManager(MandateMgdbManager):
 
     def create_user(self, name, email):
         # self.mgdb_manager will be available through inherited class
-        # insert_one is a pymongo function, you can use any pymongo function since now the 
+        # insert_one is a pymongo function, you can use any pymongo function
         # .get will get the collection instance returned by pymongo
         return self.mgdb_manager.get(AuthCollections.USERS).insert_one(dict(name=name, email=email))
 
