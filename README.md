@@ -9,31 +9,25 @@ Any Contributions are welcome!
 
 ```python
 
-# Create a collection Class to keep track of Collections
-from enum import Enum
-class AuthCollections(Enum):
-    USERS = 'users'
-    ACCESS_TOKEN = 'access_token'
+import enum
+from mgdborm.orm import MgdbManager
 
-# For a database which stores authentication related data
-mgdb_manager = MgdbManager(mongo_url=os.environ("URL"), "auth")
-mgdb_manager.register_collections_class(AuthCollections)
+# Define an Enum for Collections
+class MyCollections(enum.Enum):
+    _DB_NAME = "my_database"
+    USERS = "users"
+    ORDERS = "orders"
 
+# Initialize MgdbManager with custom settings if needed
+manager = MgdbManager(_settings={"strictmode": True})
 
-# Create your own custom class for Crud operations on Auth Db and inherit form MandateMgdbManager
+# Register the collection class
+manager.register_collection_class(MyCollections)
 
-class AuthDbManager(MandateMgdbManager):
+# Query the 'users' collection
+users_collection = manager.query(MyCollections.USERS)
 
-    def create_user(self, name, email):
-        # self.mgdb_manager will be available through inherited class
-        # insert_one is a pymongo function, you can use any pymongo function
-        # .get will get the collection instance returned by pymongo
-        return self.mgdb_manager.get(AuthCollections.USERS).insert_one(dict(name=name, email=email))
-
-
-# Pass auth_db as mgdb_manager_instance to the AuthDbManager class
-auth_db = AuthDbManager(mgdb_manager_instance=mgdb_manager)
-
-# Use as required
-user_details = auth_db.create_user(name="John Doe", email="johndoe@example.com")
+# Perform operations on the 'users' collection
+user_data = users_collection.find_one({"username": "johndoe"})
+print(user_data)
 ```
